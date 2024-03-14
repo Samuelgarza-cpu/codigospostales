@@ -1,0 +1,30 @@
+.iaamagenFondo{
+    background: url();
+    background-color: black;
+    background-position: center;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    padding-left: 30px; padding-top: 0; padding-right: 0; padding-bottom: 0;
+
+    align-items: end;
+    display: flex;
+    display: inline-block;
+    align-self: self-end;
+
+    justify-items:flex-end;
+align-content: end;
+ text-align: right;
+width: 25%;
+justify-self: right;
+margin-top: 10px;
+flex-direction: column;
+font-family: Arial, Helvetica, sans-serif;
+position: absolute;
+bottom: 0;
+margin-top: 100px;
+justify-content:flex-end;
+margin-left: 30px;
+
+}

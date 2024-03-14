@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Http\Controllers\imm;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\ObjResponse;
+use App\Models\imm\MedicalServices;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+
+class MedicalServicesImmController extends Controller
+{
+    public function index(Response $response)
+    {
+        /**
+         * Mostrar lista de todos los generos activos.
+         *
+         * @return \Illuminate\Http\Response $response
+         */
+        $response->data = ObjResponse::DefaultResponse();
+        try {
+            $list = MedicalServices::where('active', true)
+            ->select('medicalservices.*')
+            ->orderBy('medicalservices.medicalservice', 'asc')->get();
+            $response->data = ObjResponse::CorrectResponse();
+            $response->data["message"] = 'Peticion satisfactoria | Lista de servicios medicos.';
+            $response->data["result"] = $list;
+        }
+        catch (\Exception $ex) {
+            $response->data = ObjResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response, $response->data["status_code"]);
+    }
+
+    /**
+     * Mostrar listado para un selector.
+     *
+     * @return \Illuminate\Http\Response $response
+     */
+    public function selectIndex(Response $response)
+    {
+        $response->data = ObjResponse::DefaultResponse();
+        try {
+            $list = MedicalServices::where('active', true)
+            ->select('medicalservices.id as value', 'medicalservices.medicalservice as text')
+            ->orderBy('medicalservices.medicalservice', 'asc')->get();
+            $response->data = ObjResponse::CorrectResponse();
+            $response->data["message"] = 'Peticion satisfactoria | Lista de servicios medicos';
+            $response->data["result"] = $list;
+        }
+        catch (\Exception $ex) {
+            $response->data = ObjResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response, $response->data["status_code"]);
+    }
+
+    /**
+     * Crear un nuevo servicio medico.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response $response
+     */
+    public function create(Request $request, Response $response)
+    {
+        $response->data = ObjResponse::DefaultResponse();
+        try {
+            $new_medicalservice = MedicalServices::create([
+                'medicalservice' => $request->medicalservice,
+            ]);
+            $response->data = ObjResponse::CorrectResponse();
+            $response->data["message"] = 'peticion satisfactoria | servicio medico registrado.';
+            $response->data["alert_text"] = 'Servicio medico registrada';
+        }
+        catch (\Exception $ex) {
+            $response->data = ObjResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response, $response->data["status_code"]);
+    }
+
+    /**
+     * Mostrar un servicio medico especifico.
+     *
+     * @param   int $id
+     * @return \Illuminate\Http\Response $response
+     */
+    public function show(int $id, Response $response)
+    {
+        $response->data = ObjResponse::DefaultResponse();
+        try{
+            $medicalservice = MedicalServices::where('id', $id)
+            ->select('medicalservices.id', 'medicalservices.medicalservice', 'medicalservices.medicalservice')
+            ->first();
+            
+            $response->data = ObjResponse::CorrectResponse();
+            $response->data["message"] = 'peticion satisfactoria | servicio medico encontrado.';
+            $response->data["result"] = $medicalservice;
+        }
+        catch (\Exception $ex) {
+            $response->data = ObjResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response, $response->data["status_code"]);
+    }
+
+    /**
+     * Actualizar un servicio medico especifico.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response $response
+     */
+    public function update(Request $request, Response $response)
+    {
+        $response->data = ObjResponse::DefaultResponse();
+        try {
+            $medicalservice = MedicalServices::where('id', $request->id)
+            ->update([
+                'medicalservice' => $request->medicalservice,
+            ]);
+
+            $response->data = ObjResponse::CorrectResponse();
+            $response->data["message"] = 'peticion satisfactoria | servicio medico actualizado.';
+            $response->data["alert_text"] = 'Servicio medico actualizado';
+
+        } catch (\Exception $ex) {
+            $response->data = ObjResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response, $response->data["status_code"]);
+    }
+
+    /**
+     * Eliminar (cambiar estado activo=false) un servicio medico especidifco.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response $response
+     */
+    public function destroy(int $id, Response $response)
+    {
+        $response->data = ObjResponse::DefaultResponse();
+        try {
+            MedicalServices::where('id', $id)
+            ->update([
+                'active' => false,
+                'deleted_at' => date('Y-m-d H:i:s'),
+            ]);
+            $response->data = ObjResponse::CorrectResponse();
+            $response->data["message"] = 'peticion satisfactoria | servicio medico eliminada.';
+            $response->data["alert_text"] ='Servicio medico eliminada';
+
+        } catch (\Exception $ex) {
+            $response->data = ObjResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response, $response->data["status_code"]);
+    }
+}
